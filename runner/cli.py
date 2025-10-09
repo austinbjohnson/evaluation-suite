@@ -127,22 +127,26 @@ def run_eval(
         provider = "litellm"  # Default fallback
         
         # Check for specific providers (order matters - most specific first)
-        if any(x in model.lower() for x in ["gpt", "o1", "o3"]) and "openai" not in model.lower():
-            # OpenAI models (but not via LiteLLM proxy like "openai/gpt-4")
+        # First check for LiteLLM proxy patterns (provider/model format)
+        if "/" in model and any(x in model.lower() for x in ["together_ai", "groq", "gemini", "openrouter", "replicate", "huggingface", "perplexity", "anyscale", "deepinfra"]):
+            # LiteLLM proxy format (provider/model-name)
+            provider = "litellm"
+        elif any(x in model.lower() for x in ["gpt", "o1", "o3"]):
+            # OpenAI models (direct API)
             provider = "openai"
-        elif "claude" in model.lower() and "anthropic" not in model.lower():
+        elif "claude" in model.lower() and not model.startswith("anthropic."):
             # Direct Anthropic models (not via Bedrock like "anthropic.claude")
             provider = "anthropic"
-        elif any(x in model.lower() for x in ["meta.", "llama", "mistral.", "amazon.", "cohere.", "titan"]):
+        elif any(model.lower().startswith(x) for x in ["meta.", "mistral.", "amazon.", "cohere.", "anthropic.", "ai21.", "stability."]):
             # AWS Bedrock models (use dot notation like meta.llama3-70b)
             provider = "bedrock"
-        elif any(x in model.lower() for x in ["anthropic.", "ai21.", "stability."]):
-            # More Bedrock model prefixes
+        elif "llama" in model.lower() or "titan" in model.lower():
+            # Catch remaining bedrock models without dot prefix (legacy format)
             provider = "bedrock"
         elif "gemini" in model.lower() and "/" not in model:
             # Direct Gemini (future Google provider)
             provider = "google"
-        # Otherwise use litellm for everything else (together_ai/, groq/, etc.)
+        # Otherwise use litellm for everything else
         
         try:
             eval_run = runner.run_eval(

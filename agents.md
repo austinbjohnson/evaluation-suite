@@ -116,15 +116,21 @@ class Provider(ABC):
 
 #### 4. LiteLLM Provider (Universal Router)
 **File:** `runner/providers/litellm_provider.py`  
-**Environment Variables:** Model-specific (LiteLLM handles routing)
+**Environment Variables:** 
+- `LITELLM_BASE_URL` - Optional custom base URL for internal routers
+- `LITELLM_API_KEY` - Optional API key for custom instances
+- `LITELLM_METADATA_*` - Optional metadata fields for tracking
+- Model-specific keys (OpenAI, Anthropic, etc.) for public routing
 
 **Supports:** 100+ models through unified interface:
 - All major providers (OpenAI, Anthropic, Google, etc.)
 - Open source models (Llama, Qwen, DeepSeek, etc.)
-- Custom endpoints
+- Custom internal routers
 - Local models
 
 **Routing:** Fallback for any model not handled by specific providers
+
+**Internal Routing:** Supports custom base URLs and metadata for company-internal LiteLLM instances. See `docs/INTERNAL_LITELLM.md` for configuration details.
 
 ---
 

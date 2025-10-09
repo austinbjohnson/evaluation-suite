@@ -39,6 +39,10 @@ ENV/
 .env
 .env.local
 .env.*.local
+.env.internal
+.env.company
+config.internal.json
+config.internal.yaml
 
 # Test coverage
 htmlcov/
