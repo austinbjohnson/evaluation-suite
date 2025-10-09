@@ -1,0 +1,66 @@
+id: structured_output
+version: 1.0.0
+task_type: generation
+description: |
+  Tests the model's ability to generate structured output in various formats
+  (JSON, XML, CSV) with strict schema compliance. Validates syntax correctness,
+  schema adherence, and absence of extraneous text.
+
+prompt_template: prompt.md
+
+fixtures:
+  - case_id: json_contact
+    input:
+      format: "JSON"
+      schema: "{ name: string, age: number, email: string }"
+      data: "Name: Alice Smith, Age: 30, Email: alice@example.com"
+    expected_output:
+      format: "json"
+      required_fields: ["name", "age", "email"]
+  
+  - case_id: json_invoice
+    input:
+      format: "JSON"
+      schema: "{ invoice_id: string, amount: number, due_date: string, items: array }"
+      data: "Invoice #INV-001, Amount: $1,250.00, Due: 2025-02-15, Items: [Consulting (10 hrs), Travel expenses]"
+    expected_output:
+      format: "json"
+      required_fields: ["invoice_id", "amount", "due_date", "items"]
+  
+  - case_id: xml_product
+    input:
+      format: "XML"
+      schema: "<product><id></id><name></name><price></price><in_stock></in_stock></product>"
+      data: "Product ID: P-12345, Name: Wireless Mouse, Price: $29.99, In Stock: Yes"
+    expected_output:
+      format: "xml"
+      required_fields: ["id", "name", "price", "in_stock"]
+  
+  - case_id: csv_sales
+    input:
+      format: "CSV"
+      schema: "date,product,quantity,revenue"
+      data: "Jan 15 2025, Widget A, 25 units, $500; Jan 16 2025, Widget B, 10 units, $300"
+    expected_output:
+      format: "csv"
+      required_columns: ["date", "product", "quantity", "revenue"]
+
+constraints:
+  temperature: 0.1
+  max_tokens: 1024
+
+metrics:
+  - name: parse_valid
+    description: "Output is syntactically valid (parseable)"
+    target: 1.0
+  
+  - name: schema_compliance
+    description: "All required fields/columns present"
+    target: 1.0
+  
+  - name: no_extra_text
+    description: "No extraneous text outside the structured format"
+    target: 1.0
+
+scorer: scorer.py
+

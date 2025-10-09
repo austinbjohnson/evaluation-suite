@@ -1,0 +1,68 @@
+id: bc_tax_spreadsheet
+version: 1.0.0
+task_type: spreadsheet
+description: |
+  Tests the model's ability to generate a working spreadsheet with formulas
+  for calculating federal and BC provincial taxes for a sole proprietor in
+  Vancouver, BC. Validates formula quality (not hardcoded values) and
+  numerical accuracy.
+
+params_version: 2025
+
+prompt_template: prompt.md
+
+fixtures:
+  - case_id: income_45000
+    input:
+      year: 2025
+      income: 45000
+      business_type: "sole proprietor"
+    expected_output:
+      federal_tax: 5595.00
+      bc_tax: 1890.00
+      total_tax: 7485.00
+  
+  - case_id: income_75000
+    input:
+      year: 2025
+      income: 75000
+      business_type: "sole proprietor"
+    expected_output:
+      federal_tax: 11895.00
+      bc_tax: 4170.00
+      total_tax: 16065.00
+  
+  - case_id: income_125000
+    input:
+      year: 2025
+      income: 125000
+      business_type: "sole proprietor"
+    expected_output:
+      federal_tax: 25695.00
+      bc_tax: 8610.00
+      total_tax: 34305.00
+
+constraints:
+  temperature: 0.2
+  max_tokens: 2048
+
+metrics:
+  - name: formula_validation
+    description: "Checks that formulas are used (not hardcoded values)"
+    target: 1.0
+  
+  - name: tax_accuracy
+    description: "±$1 tolerance on calculated tax amounts"
+    target: 1.0
+
+scorer: scorer.py
+
+sources:
+  - name: federal_rates_2025
+    url: https://www.canada.ca/en/revenue-agency/services/tax/individuals/frequently-asked-questions-individuals/canadian-income-tax-rates-individuals-current-previous-years.html
+    note: "2025 includes mid-year rate change: lowest bracket reduced from 15% to 14% for full tax year"
+  
+  - name: bc_rates_2025
+    url: https://www2.gov.bc.ca/gov/content/taxes/income-taxes/personal/tax-rates
+    note: "BC provincial tax rates and brackets for 2025"
+

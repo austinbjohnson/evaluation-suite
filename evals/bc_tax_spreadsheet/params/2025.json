@@ -1,0 +1,79 @@
+{
+  "year": 2025,
+  "federal": {
+    "note": "2025 federal tax rates with mid-year reduction to lowest bracket (14% from 15%)",
+    "source": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/frequently-asked-questions-individuals/canadian-income-tax-rates-individuals-current-previous-years.html",
+    "brackets": [
+      {
+        "min": 0,
+        "max": 55867,
+        "rate": 0.14,
+        "note": "Reduced from 15% to 14% mid-year 2025, using full-year treatment"
+      },
+      {
+        "min": 55867,
+        "max": 111733,
+        "rate": 0.205
+      },
+      {
+        "min": 111733,
+        "max": 173205,
+        "rate": 0.26
+      },
+      {
+        "min": 173205,
+        "max": 246752,
+        "rate": 0.29
+      },
+      {
+        "min": 246752,
+        "max": null,
+        "rate": 0.33
+      }
+    ],
+    "basic_personal_amount": 15705
+  },
+  "bc": {
+    "note": "2025 BC provincial tax rates",
+    "source": "https://www2.gov.bc.ca/gov/content/taxes/income-taxes/personal/tax-rates",
+    "brackets": [
+      {
+        "min": 0,
+        "max": 47937,
+        "rate": 0.0506
+      },
+      {
+        "min": 47937,
+        "max": 95875,
+        "rate": 0.077
+      },
+      {
+        "min": 95875,
+        "max": 110076,
+        "rate": 0.105
+      },
+      {
+        "min": 110076,
+        "max": 133353,
+        "rate": 0.1229
+      },
+      {
+        "min": 133353,
+        "max": 181232,
+        "rate": 0.147
+      },
+      {
+        "min": 181232,
+        "max": 252752,
+        "rate": 0.168
+      },
+      {
+        "min": 252752,
+        "max": null,
+        "rate": 0.205
+      }
+    ],
+    "basic_personal_amount": 12580
+  }
+}
+
