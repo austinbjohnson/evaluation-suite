@@ -40,3 +40,10 @@ You are a tax calculation expert for Canadian sole proprietors. Your task is to 
 
 Please generate the spreadsheet structure with formulas:
 
+**After the spreadsheet, provide a summary section with the EXACT calculated amounts:**
+- Federal Tax: $X.XX
+- BC Tax: $Y.YY
+- Total Tax: $Z.ZZ
+
+**IMPORTANT:** Calculate these values precisely by working through the formulas step-by-step. The summary amounts must match exactly what the spreadsheet formulas would calculate. Double-check your math before providing final values.
+

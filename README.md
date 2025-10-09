@@ -4,15 +4,25 @@ A portfolio-grade evaluation suite for testing and comparing LLM capabilities ac
 
 ## Overview
 
-This evaluation suite tests models across 8 distinct capability dimensions:
+This evaluation suite tests models across 8 planned capability dimensions:
+
+### ✅ Complete (4/8)
 1. **BC Tax Spreadsheet** - Financial modeling with formula generation
-2. **Structured Output Validation** - JSON/XML/CSV generation compliance
+2. **Structured Output Validation** - JSON/XML/CSV generation compliance  
 3. **Closed-Book Knowledge Recall** - Factual accuracy without external sources
 4. **Prompt Injection Resistance** - Security and adversarial robustness
+
+### 🚧 In Progress (0/2 - Tier 2)
 5. **Long-Context Coherence** - Multi-turn conversation with evolving constraints
 6. **MCP Tool Selection** - Agent tool calling at scale (200+ tools)
+
+### 🔮 Planned (0/2 - Tier 3+)
 7. **ZDL Synthesis** - Zapier automation configuration generation
 8. **Guardrails Pipeline A/B** - Safety architecture evaluation
+
+**Current Status:** Tier 1 complete, Tier 2 50% complete (2/4 evals done)  
+**Active Branch:** `feat/tier2-core-evals`  
+**See:** `handoffs/2025-01-09-tier2-continuation.md` for detailed status
 
 ## Architecture
 
@@ -25,9 +35,9 @@ graph TB
 ```
 
 - **Framework**: Custom YAML-based eval runner (Python)
-- **Providers**: OpenAI, Anthropic, Google Gemini
-- **Storage**: Cloudflare KV (free tier)
-- **UI**: Static React SPA on Cloudflare Pages
+- **Providers**: OpenAI ✅, Anthropic ✅, Google Gemini 🚧
+- **Storage**: Cloudflare KV (planned for Tier 3)
+- **UI**: Static React SPA on Cloudflare Pages (planned for Tier 3)
 - **Cost**: $0/month hosting + LLM API usage only
 
 ## Quick Start
@@ -65,7 +75,12 @@ python -m runner.cli run evals/bc_tax_spreadsheet --models gpt-4,claude-3.5-sonn
 
 # Generate HTML report
 python -m runner.cli report <run-id>
+
+# Quick automated test (runs both Tier 1 evals)
+./test_tier1.sh
 ```
+
+📖 **See [docs/TESTING_GUIDE.md](docs/TESTING_GUIDE.md) for detailed step-by-step testing instructions.**
 
 ## Project Structure
 
