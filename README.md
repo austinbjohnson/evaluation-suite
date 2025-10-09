@@ -65,7 +65,12 @@ python -m runner.cli run evals/bc_tax_spreadsheet --models gpt-4,claude-3.5-sonn
 
 # Generate HTML report
 python -m runner.cli report <run-id>
+
+# Quick automated test (runs both Tier 1 evals)
+./test_tier1.sh
 ```
+
+📖 **See [docs/TESTING_GUIDE.md](docs/TESTING_GUIDE.md) for detailed step-by-step testing instructions.**
 
 ## Project Structure
 
