@@ -39,6 +39,14 @@ ENV/
 .env
 .env.local
 .env.*.local
+.env.internal
+.env.company
+config.internal.json
+config.internal.yaml
+
+# Internal documentation (company-specific)
+docs/INTERNAL_LITELLM.md
+INTERNAL_*.md
 
 # Test coverage
 htmlcov/
