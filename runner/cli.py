@@ -101,7 +101,21 @@ def run_eval(
     except ImportError:
         print(f"⚠️  Anthropic provider not available: module not found")
     
-    # TODO: Add Google provider when ready
+    try:
+        from runner.providers.bedrock_provider import BedrockProvider
+        runner.register_provider("bedrock", BedrockProvider())
+    except ValueError as e:
+        print(f"⚠️  AWS Bedrock provider not available: {e}")
+    except ImportError:
+        print(f"⚠️  AWS Bedrock provider not available: module not found")
+    
+    try:
+        from runner.providers.litellm_provider import LiteLLMProvider
+        runner.register_provider("litellm", LiteLLMProvider())
+    except ValueError as e:
+        print(f"⚠️  LiteLLM provider not available: {e}")
+    except ImportError:
+        print(f"⚠️  LiteLLM provider not available: module not found")
     
     # Run for each model
     results = []
@@ -110,13 +124,25 @@ def run_eval(
         print("=" * 60)
         
         # Determine provider based on model name
-        provider = "openai"  # Default
-        if "claude" in model.lower():
-            provider = "anthropic"
-        elif "gemini" in model.lower():
-            provider = "google"  # TODO: Add Google provider
-        elif any(x in model.lower() for x in ["gpt", "o1", "o3"]):
+        provider = "litellm"  # Default fallback
+        
+        # Check for specific providers (order matters - most specific first)
+        if any(x in model.lower() for x in ["gpt", "o1", "o3"]) and "openai" not in model.lower():
+            # OpenAI models (but not via LiteLLM proxy like "openai/gpt-4")
             provider = "openai"
+        elif "claude" in model.lower() and "anthropic" not in model.lower():
+            # Direct Anthropic models (not via Bedrock like "anthropic.claude")
+            provider = "anthropic"
+        elif any(x in model.lower() for x in ["meta.", "llama", "mistral.", "amazon.", "cohere.", "titan"]):
+            # AWS Bedrock models (use dot notation like meta.llama3-70b)
+            provider = "bedrock"
+        elif any(x in model.lower() for x in ["anthropic.", "ai21.", "stability."]):
+            # More Bedrock model prefixes
+            provider = "bedrock"
+        elif "gemini" in model.lower() and "/" not in model:
+            # Direct Gemini (future Google provider)
+            provider = "google"
+        # Otherwise use litellm for everything else (together_ai/, groq/, etc.)
         
         try:
             eval_run = runner.run_eval(

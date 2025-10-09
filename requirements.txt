@@ -3,6 +3,8 @@ pyyaml>=6.0.1
 openai>=1.0.0
 anthropic>=0.18.0
 google-generativeai>=0.3.0
+boto3>=1.34.0  # AWS Bedrock
+litellm>=1.0.0  # Universal LLM router
 
 # Data processing
 pandas>=2.0.0

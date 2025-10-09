@@ -65,10 +65,26 @@ class OpenAIProvider(Provider):
     def list_models(self) -> list[str]:
         """List available OpenAI models"""
         return [
-            "gpt-4",
-            "gpt-4-turbo",
+            # GPT-5 family (placeholder - verify with API docs)
+            "gpt-5",
+            "gpt-5-turbo",
+            
+            # GPT-5 Codex family (placeholder)
+            "gpt-5-codex",
+            
+            # GPT-4 family
             "gpt-4o",
             "gpt-4o-mini",
+            "gpt-4-turbo",
+            "gpt-4",
+            
+            # GPT-3.5
             "gpt-3.5-turbo",
+            
+            # O-series models
+            "o1",
+            "o1-mini",
+            "o3",
+            "o3-mini",
         ]
 

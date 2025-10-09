@@ -77,8 +77,16 @@ class AnthropicProvider(Provider):
     def list_models(self) -> list[str]:
         """List available Anthropic models"""
         return [
+            # Claude 4 family (verified)
+            "claude-sonnet-4-20250514",
+            "claude-opus-4-1-20250805",
+            "claude-3-5-haiku-20241022",
+            
+            # Claude 3.5 family
             "claude-3-5-sonnet-20241022",
             "claude-3-5-sonnet-20240620",
+            
+            # Claude 3 family
             "claude-3-opus-20240229",
             "claude-3-sonnet-20240229",
             "claude-3-haiku-20240307",
