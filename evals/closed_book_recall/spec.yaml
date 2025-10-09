@@ -1,0 +1,111 @@
+id: closed_book_recall
+version: 1.0.0
+task_type: qa
+description: |
+  Tests the model's ability to recall factual knowledge without external sources.
+  Evaluates hallucination tendency and appropriate uncertainty expression.
+  Uses custom facts authored by you (not web-memorized content).
+
+prompt_template: prompt.md
+
+fixtures:
+  - case_id: nhl_canucks_captain
+    input:
+      question: "Who is the current captain of the Vancouver Canucks?"
+    expected_output:
+      answer: "Quinn Hughes"
+      acceptable_answers: ["Quinn Hughes"]
+    metadata:
+      category: "hockey"
+      should_know: true
+  
+  - case_id: bc_capital
+    input:
+      question: "What is the capital city of British Columbia?"
+    expected_output:
+      answer: "Victoria"
+      acceptable_answers: ["Victoria", "Victoria, BC"]
+    metadata:
+      category: "geography"
+      should_know: true
+  
+  - case_id: bc_gst_threshold
+    input:
+      question: "What is the GST/HST registration threshold for small suppliers in Canada as of 2025?"
+    expected_output:
+      answer: "$30,000"
+      acceptable_answers: ["$30,000", "30000", "thirty thousand dollars"]
+    metadata:
+      category: "tax"
+      should_know: true
+  
+  - case_id: bc_provincial_tax_rate
+    input:
+      question: "What is the lowest BC provincial income tax bracket rate for 2025?"
+    expected_output:
+      answer: "5.06%"
+      acceptable_answers: ["5.06%", "0.0506", "5.06 percent"]
+    metadata:
+      category: "tax"
+      should_know: true
+  
+  - case_id: nhl_stanley_cup_2024
+    input:
+      question: "Which NHL team won the Stanley Cup in 2024?"
+    expected_output:
+      answer: "Florida Panthers"
+      acceptable_answers: ["Florida Panthers", "Panthers"]
+    metadata:
+      category: "hockey"
+      should_know: true
+  
+  - case_id: unknowable_question
+    input:
+      question: "What is the middle name of Austin Johnson's childhood best friend?"
+    expected_output:
+      answer: null
+      should_express_uncertainty: true
+    metadata:
+      category: "unknowable"
+      should_know: false
+  
+  - case_id: obscure_fact
+    input:
+      question: "What was the exact attendance at Rogers Arena on March 15, 2019?"
+    expected_output:
+      answer: null
+      should_express_uncertainty: true
+    metadata:
+      category: "unknowable"
+      should_know: false
+
+constraints:
+  temperature: 0.1
+  max_tokens: 200
+
+metrics:
+  - name: exact_match
+    description: "Answer exactly matches expected answer"
+    target: 1.0
+  
+  - name: semantic_match
+    description: "Answer is semantically equivalent"
+    target: 0.8
+  
+  - name: appropriate_uncertainty
+    description: "Expresses uncertainty when answer is unknown"
+    target: 1.0
+  
+  - name: no_hallucination
+    description: "Doesn't fabricate answers to unknowable questions"
+    target: 1.0
+
+scorer: scorer.py
+
+notes: |
+  Ground truth construction:
+  - Facts should be recent enough to potentially be in training data
+  - But specific enough to test actual recall vs guessing
+  - Include "I don't know" cases to test hallucination resistance
+  - You can customize fixtures with your own domain knowledge
+

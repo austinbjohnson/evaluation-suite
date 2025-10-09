@@ -93,7 +93,15 @@ def run_eval(
     except ValueError as e:
         print(f"⚠️  OpenAI provider not available: {e}")
     
-    # TODO: Add Anthropic and Google providers when ready
+    try:
+        from runner.providers.anthropic_provider import AnthropicProvider
+        runner.register_provider("anthropic", AnthropicProvider())
+    except ValueError as e:
+        print(f"⚠️  Anthropic provider not available: {e}")
+    except ImportError:
+        print(f"⚠️  Anthropic provider not available: module not found")
+    
+    # TODO: Add Google provider when ready
     
     # Run for each model
     results = []
@@ -101,9 +109,14 @@ def run_eval(
         print(f"\n📊 Testing model: {model}")
         print("=" * 60)
         
-        # Determine provider
-        provider = "openai"  # Default to OpenAI for now
-        # TODO: Smart provider detection based on model name
+        # Determine provider based on model name
+        provider = "openai"  # Default
+        if "claude" in model.lower():
+            provider = "anthropic"
+        elif "gemini" in model.lower():
+            provider = "google"  # TODO: Add Google provider
+        elif any(x in model.lower() for x in ["gpt", "o1", "o3"]):
+            provider = "openai"
         
         try:
             eval_run = runner.run_eval(
