@@ -41,8 +41,11 @@ class AnthropicProvider(Provider):
             "max_tokens": max_tokens,
         }
         
-        # Add any additional kwargs
-        gen_kwargs.update(kwargs)
+        # Add any additional kwargs, but filter out unsupported parameters
+        # Claude doesn't support 'seed' parameter
+        unsupported_params = {'seed'}
+        filtered_kwargs = {k: v for k, v in kwargs.items() if k not in unsupported_params}
+        gen_kwargs.update(filtered_kwargs)
         
         # Call API
         response = self.client.messages.create(**gen_kwargs)

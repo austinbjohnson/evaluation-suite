@@ -97,31 +97,38 @@ def extract_tax_amounts(output: str) -> Dict[str, float]:
     Attempt to extract tax amounts from model output.
     
     Returns dict with 'federal_tax', 'bc_tax', 'total_tax' if found.
+    
+    Prioritizes extraction from Summary section if present, with improved
+    patterns to handle comma-formatted currency (e.g., $4,108.30).
     """
     amounts = {}
     
-    # Patterns to find tax amounts
+    # Try to extract from Summary section first (more reliable)
+    summary_section = re.search(r'###?\s*Summary.*?(?=###|$)', output, re.IGNORECASE | re.DOTALL)
+    search_text = summary_section.group(0) if summary_section else output
+    
+    # Improved patterns that handle currency formatting better
+    # Look for patterns like "Federal Tax: $4,108.30" or "- **Federal Tax:** $4,108.30"
     patterns = {
         'federal_tax': [
-            r'federal\s+tax[:\s]+\$?([\d,]+\.?\d*)',
-            r'federal[:\s]+\$?([\d,]+\.?\d*)',
+            r'\*?\*?Federal\s+Tax\*?\*?\s*[:*]+\s*\$\s*([\d,]+\.?\d*)',
+            r'federal\s+tax\s*[:]+\s*\$\s*([\d,]+\.?\d*)',
         ],
         'bc_tax': [
-            r'bc\s+(?:provincial\s+)?tax[:\s]+\$?([\d,]+\.?\d*)',
-            r'provincial\s+tax[:\s]+\$?([\d,]+\.?\d*)',
-            r'bc[:\s]+\$?([\d,]+\.?\d*)',
+            r'\*?\*?BC\s+Tax\*?\*?\s*[:*]+\s*\$\s*([\d,]+\.?\d*)',
+            r'bc\s+(?:provincial\s+)?tax\s*[:]+\s*\$\s*([\d,]+\.?\d*)',
         ],
         'total_tax': [
-            r'total\s+tax[:\s]+\$?([\d,]+\.?\d*)',
-            r'total[:\s]+\$?([\d,]+\.?\d*)',
+            r'\*?\*?Total\s+Tax\*?\*?\s*[:*]+\s*\$\s*([\d,]+\.?\d*)',
+            r'total\s+tax\s*(?:payable)?\s*[:]+\s*\$\s*([\d,]+\.?\d*)',
         ]
     }
     
     for key, pattern_list in patterns.items():
         for pattern in pattern_list:
-            match = re.search(pattern, output, re.IGNORECASE)
+            match = re.search(pattern, search_text, re.IGNORECASE)
             if match:
-                # Extract and clean the number
+                # Extract and clean the number (remove commas)
                 value_str = match.group(1).replace(',', '')
                 try:
                     amounts[key] = float(value_str)
