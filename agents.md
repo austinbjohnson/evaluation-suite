@@ -130,7 +130,7 @@ class Provider(ABC):
 
 **Routing:** Fallback for any model not handled by specific providers
 
-**Internal Routing:** Supports custom base URLs and metadata for company-internal LiteLLM instances. See `docs/INTERNAL_LITELLM.md` for configuration details.
+**Internal Routing:** Supports custom base URLs and metadata for company-internal LiteLLM instances. Configure via `.env.internal` file (gitignored). See LiteLLM provider code and `.env.internal` for configuration options.
 
 ---
 

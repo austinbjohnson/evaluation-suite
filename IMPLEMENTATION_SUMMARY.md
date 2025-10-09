@@ -61,12 +61,11 @@ huggingface/mistralai/...      → LiteLLM
 - Testing strategy
 - **No company-specific details in committed version**
 
-#### `docs/INTERNAL_LITELLM.md`
-- Internal router configuration guide
-- Metadata field specifications
-- Security best practices
-- Troubleshooting guide
-- Example configurations (generic, no company details)
+#### `.env.internal` Configuration
+- Internal router configuration via gitignored file
+- Metadata field specifications in provider code
+- Security best practices (never committed)
+- Configuration template created locally
 
 ### 4. Configuration & Security
 
@@ -104,8 +103,8 @@ $ python test_providers.py
 - `runner/providers/bedrock_provider.py` (263 lines)
 - `runner/providers/litellm_provider.py` (171 lines)
 - `agents.md` (237 lines)
-- `docs/INTERNAL_LITELLM.md` (185 lines)
 - `test_providers.py` (132 lines)
+- `.env.internal` (gitignored, not in repo)
 
 ### Modified
 - `runner/cli.py` - Provider registration and auto-detection

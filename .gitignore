@@ -44,6 +44,10 @@ ENV/
 config.internal.json
 config.internal.yaml
 
+# Internal documentation (company-specific)
+docs/INTERNAL_LITELLM.md
+INTERNAL_*.md
+
 # Test coverage
 htmlcov/
 .coverage
