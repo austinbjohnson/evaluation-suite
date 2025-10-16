@@ -178,8 +178,65 @@ class EvalSpec:
         with open(template_path, 'r') as f:
             template_str = f.read()
         
+        # Prepare template variables
+        template_vars = dict(test_case.input)
+        
+        # Handle multi-turn conversations if conversation_file is specified
+        if 'conversation_file' in test_case.input:
+            conversation_data = self._load_conversation(test_case)
+            template_vars['conversation'] = conversation_data['conversation_text']
+            # Store conversation history in metadata for scorer
+            test_case.metadata['conversation_history'] = conversation_data['conversation_history']
+        
         template = Template(template_str)
-        return template.render(**test_case.input)
+        return template.render(**template_vars)
+    
+    def _load_conversation(self, test_case: TestCase) -> Dict[str, Any]:
+        """Load and format conversation from YAML file"""
+        conversation_file = test_case.input['conversation_file']
+        conversation_path = self.eval_dir / "fixtures" / conversation_file
+        
+        with open(conversation_path, 'r') as f:
+            data = yaml.safe_load(f)
+        
+        conversation = data.get('conversation', [])
+        
+        # Build formatted conversation text
+        conversation_text = []
+        user_messages = []
+        
+        for msg in conversation:
+            role = msg.get('role')
+            content = msg.get('content', '').strip()
+            day = msg.get('day', '')
+            
+            if role == 'user' and content:
+                conversation_text.append(f"[Day {day}] User: {content}")
+                user_messages.append(content)
+            elif role == 'assistant' and content:
+                conversation_text.append(f"[Day {day}] Assistant: {content}")
+        
+        # Join with double newlines for readability
+        formatted_conversation = "\n\n".join(conversation_text)
+        
+        # Build conversation history string for scorer
+        history_text = []
+        for msg in conversation:
+            role = msg.get('role')
+            content = msg.get('content', '').strip()
+            day = msg.get('day', '')
+            
+            if content:
+                history_text.append(f"[Day {day}] {role.upper()}: {content}")
+        
+        conversation_history = "\n\n".join(history_text)
+        
+        return {
+            "conversation_text": formatted_conversation,
+            "user_messages": user_messages,
+            "conversation_history": conversation_history,
+            "message_count": len([m for m in conversation if m.get('content')])
+        }
 
 
 class EvalRunner:
