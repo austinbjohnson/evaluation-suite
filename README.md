@@ -187,6 +187,8 @@ pip-audit --requirement requirements.txt
 
 For more information, see [SECURITY.md](SECURITY.md).
 
+**Latest Security Audit:** October 2025 - See [SECURITY_AUDIT_REPORT.md](docs/SECURITY_AUDIT_REPORT.md) for comprehensive audit results.
+
 ## License
 
 MIT
