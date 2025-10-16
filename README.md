@@ -157,6 +157,36 @@ View costs in the generated HTML reports or dashboard.
 - ✅ Each eval has clear enterprise rationale
 - ✅ At least one eval shows 15%+ difference between models
 
+## Security
+
+### Reporting Vulnerabilities
+
+If you discover a security vulnerability, please review our [Security Policy](SECURITY.md) for responsible disclosure guidelines.
+
+### Best Practices
+
+1. **Never commit secrets:** All API keys must be in `.env` files (gitignored)
+2. **Use `.env.example`:** Template with placeholder values for required variables
+3. **Rotate exposed keys:** If you accidentally commit a key, rotate it immediately
+4. **Run security audits:** Use `pip-audit` to check for vulnerable dependencies
+
+```bash
+# Check for vulnerable dependencies
+pip install pip-audit
+pip-audit --requirement requirements.txt
+```
+
+### Security Features
+
+- ✅ All secrets via environment variables
+- ✅ `.gitignore` configured for sensitive files
+- ✅ Input validation on model names and file paths
+- ✅ Safe error handling (no secret leakage)
+- ✅ Dependency vulnerability monitoring
+- ✅ No PII in fixtures or test data
+
+For more information, see [SECURITY.md](SECURITY.md).
+
 ## License
 
 MIT

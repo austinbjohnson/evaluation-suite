@@ -262,8 +262,23 @@ class EvalRunner:
     ) -> EvalRun:
         """Run a complete evaluation"""
         
+        # Input validation
         if provider_name not in self.providers:
             raise ValueError(f"Provider not registered: {provider_name}")
+        
+        # Sanitize model name (prevent injection attacks)
+        if not model_name or not isinstance(model_name, str):
+            raise ValueError("Model name must be a non-empty string")
+        if any(char in model_name for char in ['..', '/', '\\', '\n', '\r', ';', '|', '&']):
+            raise ValueError(f"Invalid model name: contains unsafe characters")
+        
+        # Validate temperature
+        if not 0.0 <= temperature <= 2.0:
+            raise ValueError(f"Temperature must be between 0.0 and 2.0, got {temperature}")
+        
+        # Validate max_tokens
+        if not 1 <= max_tokens <= 100000:
+            raise ValueError(f"Max tokens must be between 1 and 100000, got {max_tokens}")
         
         provider = self.providers[provider_name]
         
