@@ -1,0 +1,51 @@
+# Multi-turn conversation for NHL analytics pilot
+conversation:
+  - role: user
+    day: 1
+    content: |
+      We're planning an NHL analytics pilot project for the Vancouver Canucks. 
+      The budget is $50,000 and the deadline is March 15, 2025. 
+      We want to explore predictive analytics for team performance.
+
+  - role: assistant
+    day: 1
+    # Model generates response - not provided
+
+  - role: user
+    day: 2
+    content: |
+      Good start. I have some updates: the deadline has been moved to March 30, 2025 
+      to give us more time. Also, we need to specifically include player performance 
+      metrics and injury prediction capabilities in the scope.
+
+  - role: assistant
+    day: 2
+    # Model generates response
+
+  - role: user
+    day: 3
+    content: |
+      More updates: the budget has been increased to $65,000 due to the expanded scope. 
+      The project team lead will be Sarah Chen from our analytics department. 
+      Also, we should only use data from the 2024-2025 season for consistency.
+
+  - role: assistant
+    day: 3
+    # Model generates response
+
+  - role: user
+    day: 4
+    content: |
+      Thanks for tracking all these changes. Can you now create a comprehensive 
+      project summary that includes:
+      - The project timeline and deadline
+      - Total budget
+      - All requirements and deliverables
+      - Team lead information
+      - Any data constraints
+      
+      This will be shared with stakeholders, so please ensure all details are accurate 
+      and up-to-date with the latest information from our conversation.
+
+  # Final assistant response is what we score
+

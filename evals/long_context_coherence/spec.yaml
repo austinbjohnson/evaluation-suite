@@ -1,0 +1,45 @@
+id: long_context_coherence
+version: 1.0.0
+task_type: multi_turn_conversation
+description: |
+  Tests model's ability to maintain factual consistency and constraint 
+  adherence across multi-turn conversation with evolving requirements.
+  Simulates real-world project planning with changing constraints.
+
+prompt_template: prompt.md
+
+fixtures:
+  - case_id: nhl_analytics_pilot
+    input:
+      scenario: "nhl_analytics_project"
+      conversation_file: "nhl_conversation.yaml"
+    expected_output:
+      entities:
+        team: "Vancouver Canucks"
+        budget: "$65k"  # Updated from $50k
+        deadline: "March 30, 2025"  # Updated from March 15
+        lead: "Sarah Chen"
+        requirements: ["player performance metrics", "injury prediction"]
+        data_constraint: "2024-2025 season"
+    metadata:
+      conversation_file: "nhl_conversation.yaml"
+      
+constraints:
+  temperature: 0.3  # Slightly higher for natural conversation
+  max_tokens: 4096  # Multi-turn needs more space
+
+metrics:
+  - name: entity_retention
+    description: "Percentage of planted entities found in final output"
+    target: 0.85
+  
+  - name: constraint_adherence
+    description: "LLM judge score for respecting all constraints"
+    target: 0.80
+  
+  - name: composite_score
+    description: "Weighted average of entity retention and constraint adherence"
+    target: 0.75
+
+scorer: scorer.py
+
