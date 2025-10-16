@@ -111,12 +111,27 @@ class EvalRun:
 class EvalSpec:
     """Evaluation specification loaded from YAML"""
     
+    # Security constants
+    MAX_SPEC_FILE_SIZE_MB = 10  # Max size for spec.yaml files
+    MAX_FIXTURE_FILE_SIZE_MB = 50  # Max size for fixture files
+    
     def __init__(self, spec_path: Path):
         self.spec_path = spec_path
         self.eval_dir = spec_path.parent
         
+        # Security: Check spec file size
+        spec_size_mb = spec_path.stat().st_size / (1024 * 1024)
+        if spec_size_mb > self.MAX_SPEC_FILE_SIZE_MB:
+            raise ValueError(
+                f"Spec file too large: {spec_size_mb:.2f}MB "
+                f"(max: {self.MAX_SPEC_FILE_SIZE_MB}MB)"
+            )
+        
         with open(spec_path, 'r') as f:
             self.spec = yaml.safe_load(f)
+        
+        # Security: Validate spec schema
+        self._validate_spec_schema()
         
         self.id = self.spec['id']
         self.version = self.spec.get('version', '1.0.0')
@@ -168,6 +183,48 @@ class EvalSpec:
         
         return module
     
+    def _validate_spec_schema(self):
+        """Validate that spec YAML has required fields"""
+        required_fields = ['id', 'task_type']
+        missing_fields = [field for field in required_fields if field not in self.spec]
+        
+        if missing_fields:
+            raise ValueError(
+                f"Invalid spec schema: missing required fields: {missing_fields}"
+            )
+        
+        # Validate task_type is a known value
+        valid_task_types = [
+            'spreadsheet_generation',
+            'structured_output',
+            'knowledge_recall',
+            'prompt_injection',
+            'long_context_coherence',
+            'tool_selection',
+            'custom'
+        ]
+        task_type = self.spec.get('task_type')
+        if task_type not in valid_task_types:
+            # Warning only - allow custom task types
+            pass
+        
+        # Validate fixtures if present
+        if 'fixtures' in self.spec:
+            if not isinstance(self.spec['fixtures'], list):
+                raise ValueError("'fixtures' must be a list")
+    
+    def _check_fixture_file_size(self, file_path: Path):
+        """Security: Check fixture file size"""
+        if not file_path.exists():
+            return  # File doesn't exist - let normal error handling deal with it
+        
+        file_size_mb = file_path.stat().st_size / (1024 * 1024)
+        if file_size_mb > self.MAX_FIXTURE_FILE_SIZE_MB:
+            raise ValueError(
+                f"Fixture file too large: {file_path.name} is {file_size_mb:.2f}MB "
+                f"(max: {self.MAX_FIXTURE_FILE_SIZE_MB}MB)"
+            )
+    
     def render_prompt(self, test_case: TestCase) -> str:
         """Render prompt template with test case input"""
         if not self.prompt_template_path:
@@ -195,6 +252,9 @@ class EvalSpec:
         """Load and format conversation from YAML file"""
         conversation_file = test_case.input['conversation_file']
         conversation_path = self.eval_dir / "fixtures" / conversation_file
+        
+        # Security: Check fixture file size
+        self._check_fixture_file_size(conversation_path)
         
         with open(conversation_path, 'r') as f:
             data = yaml.safe_load(f)
